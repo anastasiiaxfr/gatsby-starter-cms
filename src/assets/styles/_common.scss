@@ -1,0 +1,49 @@
+@layer components {
+  *::selection {
+    background-color: var(--color-main);
+    @apply text-white opacity-100;
+  }
+
+  #loom-companion-mv3 {
+    display: none;
+  }
+
+  html,
+  body,
+  #___gatsby,
+  #gatsby-focus-wrapper {
+    @apply flex flex-col min-h-screen bg-white dark:bg-dark_0 dark:text-white;
+  }
+
+  body {
+    &::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      @apply bg-black;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-main);
+    }
+  }
+
+  .container {
+    @apply mx-auto max-w-screen-md lg:max-w-screen-xl px-6;
+  }
+
+  section {
+    @apply my-4;
+  }
+
+  .logo {
+    @apply text-sm font-thin tracking-wide select-none;
+
+    b {
+      @apply font-bold text-2xl;
+      color: var(--color-main);
+    }
+  }
+}

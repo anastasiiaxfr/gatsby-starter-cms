@@ -1,0 +1,65 @@
+@layer base {
+
+    h1,
+    .h1 {
+        @apply text-4xl font-semibold mb-6;
+    }
+
+    h2 {
+        @apply text-3xl font-semibold mb-5 mt-7;
+
+        &+p {
+            @apply mt-0;
+        }
+    }
+
+    h3 {
+        @apply text-2xl font-semibold mb-5 mt-0;
+    }
+
+    p {
+        @apply text-[18px] my-3;
+    }
+
+    ul {
+        @apply pl-3;
+
+        li {
+            @apply list-disc my-2;
+        }
+    }
+
+}
+
+
+@layer components {
+    blockquote {
+        @apply bg-light_1 p-8 my-8 rounded-lg text-center font-semibold dark:bg-dark_2;
+    }
+
+    blockquote p {
+        @apply text-black text-xl opacity-100 dark:text-white !important;
+    }
+
+    blockquote::before {
+        display: block;
+        content: '“';
+        font-size: 100px;
+        line-height: 1;
+        font-weight: 800;
+        color: var(--color-main);
+        margin-bottom: -50px;
+    }
+
+   .subtitle {
+    @apply text-lg mt-3 mb-6 opacity-60 dark:opacity-100 dark:text-dark_5;
+   }
+
+   .text-slogan {
+    @apply font-thin text-3xl sm:text-4xl lg:text-5xl xl:text-6xl leading-tight my-0 dark:border-gray-800 !important;
+
+    b {
+        @apply font-normal !important; 
+    }
+   }
+}

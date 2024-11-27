@@ -1,0 +1,128 @@
+%a {
+  position: relative;
+  &::after {
+    content: "";
+    display: block;
+    margin-top: 2px;
+    width: 0;
+    height: 2px;
+    background: var(--color-main);
+    transition: $trs;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
+}
+
+@layer components {
+  .header-top,
+  .footer {
+    @apply bg-black dark:bg-dark_0 text-white py-3;
+  }
+
+  .header {
+    .container {
+      @apply flex justify-between items-center gap-3;
+    }
+
+    &-cta {
+      @apply flex gap-2;
+    }
+
+    &-btm {
+      @apply py-4 bg-white border-y border-gray-100 shadow-sm dark:bg-dark_2 dark:text-white dark:border-y-gray-800;
+
+      .header-menu {
+        @apply gap-2 gap-x-3;
+
+        a {
+          margin-top: 4px;
+        }
+      }
+    }
+
+    &-top {
+      .header-menu {
+        @apply hidden md:flex;
+      }
+    }
+  }
+
+  .header-menu,
+  .footer-menu {
+    @apply flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mx-auto;
+
+    a {
+      @apply font-medium hover:text-main;
+      @extend %a;
+    }
+  }
+
+  .menu-dd {
+    @apply relative inline-block;
+
+    &-toggle {
+      @apply flex gap-2 items-center;
+
+      svg {
+        @apply text-white;
+      }
+    }
+  }
+
+  .menu-sub {
+    @apply absolute right-0 z-10 mt-4 p-6 w-56 origin-top-right rounded-md focus:outline-none bg-dark_2 flex flex-col gap-3 border border-gray-800 uppercase;
+  }
+
+  .footer {
+    &-menu {
+      @apply uppercase;
+    }
+
+    .footer-top {
+      @apply py-4;
+
+      .container {
+        @apply flex justify-center lg:justify-between items-center flex-wrap gap-4 gap-y-3;
+      }
+    }
+
+    .footer-mdl {
+      .container {
+        @apply flex flex-wrap justify-center py-4 gap-4 opacity-50 border-t border-gray-500;
+      }
+    }
+
+    .footer-btm {
+      .container {
+        @apply flex justify-center opacity-50;
+      }
+    }
+  }
+
+  .drawer {
+    @apply fixed top-0 left-0 z-50 w-full h-full p-6 m-0 bg-dark_2 text-white max-w-screen-sm transition -translate-x-full;
+
+    &.open {
+      @apply translate-x-0;
+    }
+
+    &-header {
+      @apply flex items-center justify-between;
+    }
+
+    &-menu {
+      @apply grid gap-4 mt-8;
+    }
+
+    &-toggle {
+      @apply flex items-center justify-center w-[40px] h-[40px] bg-main rounded-sm md:hidden;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}

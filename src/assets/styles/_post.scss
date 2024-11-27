@@ -1,0 +1,146 @@
+@layer components {
+  .page {
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      @apply uppercase text-2xl font-semibold;
+    }
+
+    p,
+    li {
+      @apply dark:text-dark_5;
+    }
+
+    &-wrapper {
+      @apply flex-1;
+    }
+
+    &-main {
+      @apply my-10;
+
+      b,
+      strong {
+        @apply font-semibold;
+      }
+
+      p {
+        @apply opacity-70;
+      }
+    }
+
+    &-error {
+      @apply bg-black text-white flex flex-col items-center justify-center gap-4 text-center flex-1;
+      &__title {
+        @apply font-extrabold text-[10em] -mb-4;
+        line-height: 0.8;
+        color: var(--color-main);
+      }
+    }
+  }
+
+  .sidebar {
+    @apply flex flex-col gap-8;
+
+    &-block {
+      @apply my-0 p-6 bg-light_1 rounded-lg w-full dark:bg-dark_2;
+
+      h2 {
+        @apply mt-0 text-2xl;
+      }
+    }
+
+    &-post {
+      @apply grid gap-4;
+    }
+  }
+
+  .post {
+    @apply mt-0;
+
+    h1 {
+      @apply mb-3 text-2xl font-semibold;
+    }
+
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      @apply mb-3 text-xl font-semibold;
+    }
+
+    p > a:hover {
+      color: var(--color-main);
+    }
+
+    &s {
+      @apply flex flex-col gap-6;
+    }
+    &-actions {
+      @apply flex gap-2;
+    }
+
+    &-header {
+      @apply flex flex-wrap gap-3 justify-between mb-8 mt-3;
+
+      &-inner {
+        @apply flex flex-wrap items-center gap-3;
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    &-footer {
+      @apply mt-10 flex flex-wrap gap-4 justify-between items-center;
+    }
+
+    &-poster {
+      @apply w-full object-cover aspect-auto rounded-xl;
+    }
+
+    &-lead {
+      @apply text-lg mt-3 mb-6 opacity-60 dark:opacity-100 dark:text-dark_5;
+    }
+
+    &-authors {
+      @apply flex items-center gap-3;
+
+      b {
+        @apply font-semibold;
+      }
+    }
+
+    &-author {
+      @apply flex items-center gap-3;
+    }
+
+    &-content {
+      p,
+      li {
+        @apply text-[15px] my-2 opacity-60 dark:opacity-100 dark:text-dark_5;
+      }
+
+      a {
+        word-break: break-all;
+        color: var(--color-main);
+        @apply underline transition font-semibold;
+      }
+    }
+  }
+
+  .page-single {
+    @apply grid gap-8 grid-cols-1;
+    grid-template-columns: 2fr 1fr;
+  }
+
+  @media only screen and (max-width: 1023px) {
+    .page-single {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -1,0 +1,48 @@
+@layer components {
+  .banners > .card,
+  .card-active {
+    @apply border text-white bg-main;
+    border-width: 0;
+
+    .card-desc {
+      @apply opacity-60 dark:opacity-80 dark:text-white;
+    }
+  }
+
+  .banners {
+    @apply grid gap-6 my-6 items-stretch;
+
+    img {
+      @apply block object-cover w-[100%] h-[100%];
+    }
+
+    & > .card:hover .card-title {
+      @apply text-white;
+    }
+  }
+
+  .banner {
+    @apply border border-gray-200 shadow-slate-100 shadow-xl dark:shadow-none dark:border-none rounded-xl overflow-hidden;
+
+    & * {
+      @apply w-full h-full object-cover object-left;
+    }
+
+    &_lg {
+      @extend .banner;
+      @apply hidden sm:flex md:col-span-2;
+
+      & * {
+        max-width: 100% !important;
+      }
+    }
+  }
+
+  .banners_1 {
+    @apply grid-cols-1 xl:grid-cols-2;
+
+    .banner {
+      @apply hidden xl:flex;
+    }
+  }
+}

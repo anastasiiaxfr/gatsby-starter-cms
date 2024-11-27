@@ -1,0 +1,226 @@
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 text-white uppercase no-underline rounded-lg transition px-8 py-4 font-semibold bg-main;
+
+    &:hover,
+    &:active,
+    &:focus {
+      @apply bg-main;
+    }
+
+    &_light {
+      @extend .btn;
+      @apply bg-gray-100 text-black rounded-xl capitalize hover:text-white dark:bg-dark_3 dark:text-white dark:hover:bg-main;
+    }
+  }
+
+  .tags {
+    @apply flex items-center gap-2;
+
+    a {
+      @apply text-main;
+    }
+  }
+
+  .soc {
+    @apply flex gap-2;
+
+    a {
+      @apply flex items-center justify-center text-black bg-gray-200 w-[40px] h-[40px] rounded-sm transition cursor-pointer select-none dark:bg-dark_3 dark:text-white;
+
+      &:hover {
+        @apply text-white  bg-main dark:text-white;
+      }
+    }
+
+    &_main a {
+      background-color: var(--color-main);
+      @apply text-white cursor-pointer select-none;
+
+      &:hover {
+        @apply text-white bg-gray-800;
+      }
+    }
+  }
+
+  .chip {
+    @apply inline-flex text-[10px] tracking-widest font-bold uppercase px-4 py-2 rounded-full select-none text-white bg-main;
+
+    .banners & {
+      @apply dark:bg-dark_2 dark:text-white bg-white text-main;
+    }
+  }
+
+  .date {
+    @apply flex gap-1 items-center text-[12px];
+  }
+
+  .theme-switcher,
+  .search-btn,
+  .share-btn {
+    @apply w-[40px] h-[40px] inline-flex items-center justify-center text-white rounded-sm bg-main;
+  }
+
+  .contacts {
+    @apply flex gap-x-6 gap-y-1 items-center justify-center flex-wrap;
+
+    a {
+      @apply flex items-center gap-2;
+    }
+
+    svg {
+      @apply text-main;
+    }
+
+    &_col {
+      @apply flex flex-col gap-4 mt-8;
+
+      a {
+        @apply flex items-center gap-2 font-semibold;
+
+        &:hover {
+          svg {
+            @apply bg-dark_4 text-white;
+          }
+        }
+      }
+
+      svg {
+        @apply bg-main text-white dark:bg-dark_3 dark:text-white w-[40px] h-[40px] rounded-sm flex items-center justify-center p-3 transition duration-300;
+      }
+    }
+  }
+
+  .contact {
+    &-cards {
+      @apply grid lg:grid-cols-3 gap-8;
+    }
+
+    &-card {
+      @apply p-8 border border-2 rounded-lg flex flex-col gap-4 dark:border-gray-800;
+
+      a {
+        @apply flex items-center gap-3 dark:text-dark_5 font-semibold;
+
+        svg {
+          @apply min-w-[40px] w-[40px] h-[40px] p-3 rounded-lg bg-gray-100 text-black dark:bg-dark_3 dark:text-white;
+        }
+      }
+    }
+  }
+
+  .networks {
+    @apply grid grid-cols-3 gap-3;
+
+    .network {
+      @apply bg-gray-100 rounded-lg p-[8px] sm:p-4 flex flex-col items-center gap-1 transition dark:bg-dark_3 dark:hover:bg-dark_4;
+
+      &:hover {
+        @apply bg-rose-50 text-main;
+      }
+
+      svg {
+        @apply text-white;
+      }
+
+      &-icon {
+        @apply w-[40px] h-[40px] rounded-full flex items-center justify-center;
+      }
+
+      &-label {
+        @apply hidden sm:block;
+      }
+
+      .soc {
+        &-1 {
+          background-color: $color_1;
+        }
+        &-2 {
+          background-color: $color_2;
+        }
+        &-3 {
+          background-color: $color_3;
+        }
+        &-4 {
+          background-color: $color_4;
+        }
+        &-5 {
+          background-color: $black;
+        }
+        &-6 {
+          @apply bg-green-600;
+        }
+      }
+    }
+  }
+
+  .pagination {
+    @apply mt-6 flex flex-wrap gap-3;
+
+    a {
+      @apply min-w-[45px] flex items-center justify-center py-2 px-4 border dark:border-gray-800 hover:bg-main hover:text-white transition rounded;
+    }
+  }
+
+  .form {
+    @apply bg-gray-100 dark:bg-dark_3 dark:text-white rounded-md p-4 sm:p-10 flex flex-col gap-4 max-w-[900px] mx-auto;
+
+    input:not([type="radio"]):not([type="checkbox"]),
+    textarea {
+      @apply w-full p-4 px-8 resize-none rounded-sm border border-white focus-visible:outline-none focus-visible:border-gray-200 border-2 dark:bg-dark_4 dark:text-white dark:border-gray-800;
+    }
+
+    [type="submit"] {
+      @apply w-full rounded-sm;
+    }
+  }
+
+  .icon {
+    @apply bg-main text-white rounded-xl w-[100px] h-[100px] p-2 flex items-center justify-center;
+
+    svg {
+      @apply w-[60px] h-[60px];
+    }
+  }
+
+  .slider-nav {
+    @apply flex gap-2 items-center;
+
+    button {
+      @apply w-[40px] h-[40px] flex items-center justify-center rounded-sm bg-gray-100 dark:bg-dark_4 dark:text-white;
+
+      &:hover, &:active, &:focus {
+        @apply bg-main text-white;
+      }
+    }
+  }
+
+  .breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $gap1;
+    margin-bottom: $gap3;
+    padding: 0;
+    
+    li {
+      display: flex;
+      align-items: center;
+      gap: $gap1;
+      list-style-type: none;
+      display: inline-flex;
+      margin: 0;
+      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 12px;
+      opacity: 0.5;
+
+      &:not(:last-child):after{
+        content: '/';
+      }
+
+      &.active {
+        opacity: 1;
+      }
+    }
+  }
+}

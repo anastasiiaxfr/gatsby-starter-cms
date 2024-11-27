@@ -1,0 +1,35 @@
+@layer components {
+    .authors {
+        @apply grid gap-6 my-0;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        
+    }
+
+    .author {
+        @apply border dark:border-gray-800 rounded-lg p-6 m-0 text-center;
+        &-desc {
+            @apply my-4 opacity-60 dark:opacity-100 text-sm dark:text-dark_5;
+        }
+        &-info {
+            @apply opacity-60 dark:opacity-100;
+        }
+        &-title {
+            @apply font-semibold mb-1 opacity-100;
+        }
+        &-img {
+            @apply w-[100px] h-[100px] rounded-full overflow-hidden bg-gray-100 dark:bg-dark_2 mx-auto mb-4 border-4 dark:border-gray-800;
+
+            & > * {
+                @apply object-cover;
+            }
+        }
+
+        .soc {
+            @apply justify-center mb-4;
+
+            a {
+                @apply bg-gray-200 text-black hover:bg-main hover:text-white dark:bg-dark_3 dark:text-white dark:hover:bg-main;
+            }
+        }
+    }
+}

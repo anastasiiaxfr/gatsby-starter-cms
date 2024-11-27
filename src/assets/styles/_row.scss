@@ -1,0 +1,15 @@
+.row {
+    &_1 {
+        @apply grid lg:grid-cols-2 gap-x-10 gap-y-8 items-center;
+    }
+
+    &_2 {
+        @apply grid gap-x-10 gap-y-8 ;
+        grid-template-columns: 1fr 2fr;
+
+        @media screen and (max-width: 1024px) {
+            grid-template-columns: 1fr;
+            
+        }
+    }
+}
