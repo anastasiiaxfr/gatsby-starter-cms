@@ -7,6 +7,8 @@
 /**
  * @type {import('gatsby').GatsbyConfig}
  */
+require("dotenv").config();
+
 module.exports = {
   siteMetadata: {
     title: "Gatsby Starter | Xforeal",
@@ -14,7 +16,7 @@ module.exports = {
     copyright: "This website is copyright 2024 Xforeal",
     twitterUsername: `@gatsbyjs`,
     image: `/seo/seo.jpg`,
-    siteUrl: `https://xforeal-news-md.vercel.app`,
+    siteUrl: process.env.HOST,
   },
   plugins: [
     "gatsby-plugin-postcss",
@@ -22,14 +24,14 @@ module.exports = {
     `gatsby-plugin-sharp`,
     `gatsby-plugin-sass`,
     `gatsby-transformer-sharp`, // Needed for dynamic images
-    // {
-    //   resolve: `gatsby-source-contentful`,
-    //   options: {
-    //     spaceId: process.env.CONTENTFUL_SPACE_ID,
-    //     // Learn about environment variables: https://gatsby.dev/env-vars
-    //     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-    //   },
-    // },
+    {
+      resolve: `gatsby-source-contentful`,
+      options: {
+        spaceId: process.env.CONTENTFUL_SPACE_ID,
+        // Learn about environment variables: https://gatsby.dev/env-vars
+        accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+      },
+    },
     `gatsby-plugin-image`,
     {
       resolve: `gatsby-source-filesystem`,
@@ -69,13 +71,6 @@ module.exports = {
     {
       resolve: `gatsby-transformer-remark`,
       options: {},
-    },
-
-    {
-      resolve: 'gatsby-plugin-env-variables',
-      options: {
-        allowList: ['GMAP_API', 'TEST'], 
-      },
     },
   ],
 };

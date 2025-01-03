@@ -19,17 +19,21 @@ const socPost = [
 function Share({ data }) {
     return (
         <nav className="soc soc_main">
-            {data ? data.map((i, ind) => (
-                <Link to={i.link} key={ind} title={i.name} target="_blank">
-                    {i.name === 'facebook' && <FaFacebookF />}
-                    {i.name === 'twitter' && <FaXTwitter />}
-                    {i.name === 'telegram' && <FaTelegramPlane />}
-                    {i.name === 'linkedin' && <FaLinkedinIn />}
-                    {i.name === 'email' && <MdAlternateEmail />}
-                    {i.name === 'discord' && <FaDiscord />}
+            {data ?
+                <>
+                <Link to={data.facebook} title="Facebbok" target="_blank">
+                    <FaFacebookF />
                 </Link>
-            ))
-
+                <Link to={data.linkedin} title="Linkedin" target="_blank">
+                    <FaLinkedinIn />
+                </Link>
+                <Link to={data.email} title="Email" target="_blank">
+                    <MdAlternateEmail />
+                </Link>
+                <Link to={data.discord} title="Email" target="_blank">
+                    <FaDiscord />
+                </Link>
+                </>
                 : socPost.map((i, ind) => (
                     <Link to={i.url} key={ind} title={i.label}>
                         {i.icon}

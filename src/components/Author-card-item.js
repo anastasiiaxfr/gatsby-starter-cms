@@ -11,21 +11,20 @@ function Card({ data }) {
                 <GatsbyImage image={getImage(data.ava)} />
             </div>
             <div className="author-title">
-                {data.title}
+                {data.name}
 
             </div>
             <div className="author-info">
                 {data.job}
             </div>
             <div className="author-desc">
-                {data.exerpt}
+                {data.excerpt?.excerpt}
             </div>
 
-            <Socials data={data.contacts} />
+            <Socials data={data} />
 
             <Link className="btn_light" to={`/authors/${data.slug}`}>
                 View Profile <FaArrowRightLong />
-
             </Link>
 
         </figure>

@@ -45,6 +45,8 @@ export default function Header({ categories }) {
     };
   }, []);
 
+
+
   return (
     <>
       <header className="header" ref={headerRef}>
@@ -110,12 +112,12 @@ export default function Header({ categories }) {
                   >
                     {categories?.map((i, ind) => (
                       <Link
-                        to={`/category/${i.toLowerCase().replaceAll(" ", "-")}`}
+                        to={`/category/${i.slug}`}
                         key={ind}
                         role="menuitem"
                         onClick={() => setOpenDropdown(null)}
                       >
-                        {i}
+                        {i.title}
                       </Link>
                     ))}
                   </nav>
@@ -126,9 +128,9 @@ export default function Header({ categories }) {
             </nav>
 
             <div className="header-cta">
-              <button className="search-btn" title="Search">
+              {/* <button className="search-btn" title="Search">
                 <IoSearchSharp />
-              </button>
+              </button> */}
               <ThemeSwitch />
               <button className="drawer-toggle" onClick={() => setShowDrawer(!showDrawer)}>
                 {showDrawer ? <IoMdClose /> : <IoMdMenu />}
@@ -140,15 +142,15 @@ export default function Header({ categories }) {
           <div className="container">
             <nav className="header-menu">
               <Link to="/">Home</Link>|
-              {categories?.map((i, ind) => (
+              {categories.map((i, ind) => (
                 <>
                   <Link
-                    to={`/category/${i.toLowerCase().replaceAll(" ", "-")}`}
+                    to={`/category/${i.slug}`}
                     key={ind}
                     role="menuitem"
                     onClick={() => setOpenDropdown(null)}
                   >
-                    {i}
+                    {i.title}
                   </Link>
                   {ind < categories.length - 1 && " | "}
                 </>

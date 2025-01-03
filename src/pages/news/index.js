@@ -5,18 +5,20 @@ import Article from "../../components/Article";
 import Pagination from "../../components/Pagination";
 
 function News({ data, pageContext }) {
-  const news = data.allMarkdownRemark.nodes;
-  const { allCategories } = data;
+  const news = data.allContentfulNews.nodes;
+  const allCategories = data.allContentfulCategories.nodes;
   const { numPages, currentPage } = pageContext;
 
+  console.log(data)
+
   return (
-    <Layout categories={allCategories.distinct}>
+    <Layout categories={allCategories}>
       <div className="container">
 
         <h2 className="h1">Latest News</h2>
         <section className="cards cards_3">
           {news.map((i, ind) => (
-            <Article data={i.frontmatter} key={ind} />
+            <Article data={i} key={ind} />
           ))}
         </section>
         {/* {<Pagination numPages={numPages} currentPage={currentPage} part="news" />} */}
@@ -29,27 +31,30 @@ function News({ data, pageContext }) {
 export default News;
 
 export const query = graphql`
-  query allNews {
-    allMarkdownRemark(filter: { fileAbsolutePath: { regex: "/src/markdown/news//" } }) {
-      nodes {
-        frontmatter {
-          title
-          authors
-          category
-          exerpt
-          date
-          slug
-          thumb {
-            childImageSharp {
-              gatsbyImageData
-            }
-          }
-        }
-        id
+query allNewsParent {
+  allContentfulNews(sort: {createdAt: DESC}, limit: 50) {
+    nodes {
+      slug
+      title
+      createdAt
+      read
+      author {
+        name
+      }
+      description {
+        description
+      }
+      thumbnail {
+        gatsbyImageData(width: 600, height: 300, layout: CONSTRAINED)
       }
     }
-    allCategories: allMarkdownRemark {
-      distinct(field: { frontmatter: { category: SELECT } })
+  }
+
+  allContentfulCategories {
+      nodes {
+        title
+        slug
+      }
     }
   }
 `;

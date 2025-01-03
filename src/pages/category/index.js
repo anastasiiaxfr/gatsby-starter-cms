@@ -18,7 +18,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
 function News({ data }) {
-  const news = data.allMarkdownRemark.nodes;
+  const news = data.allContentfulNews.nodes;
   const { allCat, allAuthors } = data;
 
   console.log("news", allAuthors);
@@ -49,18 +49,18 @@ function News({ data }) {
   }, []);
 
   return (
-    <Layout categories={allCat.distinct}>
+    <Layout categories={allCat.nodes}>
       <div className="container">
         <h1 className="">All categories</h1>
 
         <div className="flex flex-wrap gap-3">
-          {allCat.distinct.map((i, ind) => (
+          {allCat.nodes.map((i, ind) => (
             <Link
               key={ind}
-              to={`/category/${i.toLowerCase().replaceAll(" ", "-")}`}
+              to={`/category/${i.slug}`}
               className="p-2 px-4 bg-gray-100 dark:bg-dark_4 rounded-md hover:bg-main hover:dark:bg-main hover:text-white font-semibold"
             >
-              {i}
+              {i.title}
             </Link>
           ))}
         </div>
@@ -105,7 +105,7 @@ function News({ data }) {
         >
           {allAuthors.nodes.map((item, index) => (
             <SwiperSlide key={index}>
-              <AuthorCard data={item.frontmatter} />
+              <AuthorCard data={item} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -151,7 +151,7 @@ function News({ data }) {
         >
           {news.map((item, index) => (
             <SwiperSlide key={index}>
-              <Article data={item.frontmatter} />
+              <Article data={item} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -164,51 +164,45 @@ export default News;
 
 export const query = graphql`
   query {
-    allMarkdownRemark(
-      filter: { fileAbsolutePath: { regex: "/src/markdown/news//" } }
-      limit: 16
-    ) {
-      nodes {
-        frontmatter {
-          title
-          authors
-          category
-          exerpt
-          date
-          slug
-          thumb {
-            childImageSharp {
-              gatsbyImageData
-            }
-          }
-        }
-        id
+    allContentfulNews {
+    nodes {
+      author {
+        name
+      }
+      category {
+        title
+      }
+      description {
+        description
+      }
+      slug
+      title
+      thumbnail {
+        gatsbyImageData(width: 600, height: 300, layout: CONSTRAINED)
       }
     }
-    allCat: allMarkdownRemark {
-      distinct(field: { frontmatter: { category: SELECT } })
-    }
-    allAuthors: allMarkdownRemark(
-      filter: { fileAbsolutePath: { regex: "/src/markdown/authors//" } }
-      limit: 50
-    ) {
+  }
+    allCat: allContentfulCategories {
       nodes {
-        frontmatter {
-          slug
-          title
-          job
-          exerpt
-          ava {
-            childImageSharp {
-              gatsbyImageData
-            }
-          }
-          contacts {
-            link
-            name
-          }
-        }
+        title
+        slug
       }
+    } 
+    allAuthors: allContentfulAuthors {
+    nodes {
+      name
+      job
+      excerpt {
+        excerpt
+      }
+      ava {
+        gatsbyImageData(width: 400, height: 400, layout: CONSTRAINED)
+      }
+      linkedin
+      email
+      discord
+      facebook
     }
+  }
   }
 `;

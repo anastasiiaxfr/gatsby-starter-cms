@@ -7,12 +7,13 @@ import Sidebar from "../components/Sidebar";
 import Share from "../components/Share";
 import { FaRegCalendarAlt, FaRegBookmark, FaRegHeart } from "react-icons/fa";
 import { Helmet } from "react-helmet";  
+import Builder from "../components/Builder";
 
 function SingleNews({ data }) {
-  const { markdownRemark, latestNews, allAuthors, allCategories, site } = data;
-  const { title, authors, category, date, exerpt, thumb, slug } =
-    markdownRemark.frontmatter;
-  const img = getImage(thumb);
+  const { site } = data;
+  const allCategories = data.allContentfulCategories.nodes;
+  const allNews = data.latestNews.nodes;
+  const post = data.singleNews;
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -33,14 +34,14 @@ function SingleNews({ data }) {
       {
         "@type": "ListItem",
         "position": 3,
-        "name": title,
-        "item": `${site.siteMetadata.siteUrl}/news/${slug}`,
+        "name": post.title,
+        "item": `${site.siteMetadata.siteUrl}/news/${post.slug}`,
       },
     ],
   };
 
   return (
-    <Layout categories={allCategories.distinct}>
+    <Layout categories={allCategories}>
       <div className="container">
         <Helmet>
           <script type="application/ld+json">
@@ -56,26 +57,27 @@ function SingleNews({ data }) {
             <Link to="/news">News</Link>
           </li>
           <li className="active">
-            {title.length > 50 ? `${title.slice(0, 50)}...` : title}
+            {post.title.length > 50 ? `${post.title.slice(0, 50)}...` : post.title}
           </li>
         </ul>
         <article className="page-single">
           <section className="post">
-            <GatsbyImage image={img} alt={title} className="post-poster" />
+            <GatsbyImage  image={post.thumbnail.gatsbyImageData}
+              alt={post.thumbnail.description || post.title} className="post-poster" />
 
             <div className="post-header">
               <div className="post-header-inner">
                 <Link className="chip" to="/">
-                  {category}
+                  {post.category.title}
                 </Link>
                 <div className="post-authors">
                   By
-                  {authors.map((author, index) => (
+                  {post.author.map((i, index) => (
                     <span key={index} className="post-author">
                       <b>
-                        <Link to="/">{author}</Link>
+                        <Link to="/">{i.name}</Link>
                       </b>
-                      {index < authors.length - 1 && " | "}
+                      {index < post.author.length - 1 && " | "}
                     </span>
                   ))}
                 </div>
@@ -83,12 +85,12 @@ function SingleNews({ data }) {
 
               <div className="date">
                 <FaRegCalendarAlt />
-                <time dateTime={date}>
-                  {new Date(date).getFullYear()}-
-                  {String(new Date(date).getMonth() + 1).padStart(2, "0")}-
-                  {String(new Date(date).getDate()).padStart(2, "0")}
+                <time dateTime={post.createdAt}>
+                  {new Date(post.createdAt).getFullYear()}-
+                  {String(new Date(post.createdAt).getMonth() + 1).padStart(2, "0")}-
+                  {String(new Date(post.createdAt).getDate()).padStart(2, "0")}
                 </time>
-                | <small>10 min read</small>
+                | <small>{post.read} min read</small>
               </div>
 
               <div className="post-actions">
@@ -101,13 +103,12 @@ function SingleNews({ data }) {
               </div>
             </div>
 
-            <h1>{title}</h1>
-            <div className="post-lead">{exerpt}</div>
+            <h1>{post.title}</h1>
+            
+            <div className="post-lead">{post.description.description}</div>
+            
 
-            <div
-              className="post-content"
-              dangerouslySetInnerHTML={{ __html: markdownRemark.html }}
-            ></div>
+            <Builder post={ post }></Builder>
 
             <div className="post-footer">
               <div className="tags">
@@ -115,14 +116,13 @@ function SingleNews({ data }) {
                 <Link to="/">Tag1</Link> / <Link to="/">Tag2</Link>
               </div>
 
-              <Share data={`${site.siteMetadata.siteUrl}/news/${slug}`} />
+              <Share data={`${site.siteMetadata.siteUrl}/news/${post.slug}`} />
             </div>
           </section>
 
           <Sidebar
-            data={latestNews.nodes}
-            currentAuthors={authors}
-            authors={allAuthors.nodes}
+            data={allNews}
+            currentAuthors={post.author}
           />
         </article>
       </div>
@@ -133,93 +133,87 @@ function SingleNews({ data }) {
 export default SingleNews;
 
 export const Head = ({ data }) => {
-  const { markdownRemark } = data;
-  const { title, thumb, exerpt, slug } = markdownRemark.frontmatter;
 
   return (
     <SEO
-      title={title}
-      image={thumb.childImageSharp.fluid.src}
-      description={exerpt}
-      link={`/news/${slug}`}
+      title={data.singleNews.title}
+      image={data.singleNews?.thumbnail}
+      description={data.singleNews.description.description}
+      link={`/news/${data.singleNews.slug}`}
     />
   );
 };
 
 export const query = graphql`
-  query ($slug: String) {
-    site {
-      siteMetadata {
-        siteUrl
-      }
-    }
-    latestNews: allMarkdownRemark(
-      filter: {
-        fileAbsolutePath: { regex: "/src/markdown/news//" }
-        frontmatter: { slug: { ne: $slug } }
-      }
-      limit: 5
-    ) {
-      nodes {
-        frontmatter {
-          title
-          authors
-          category
-          exerpt
-          date
-          slug
-          thumb {
-            childImageSharp {
-              gatsbyImageData
-            }
-          }
-        }
-        id
-      }
-    }
-    markdownRemark(frontmatter: { slug: { eq: $slug } }) {
-      html
-      frontmatter {
-        slug
-        title
-        authors
-        category
-        date
-        exerpt
-        thumb {
-          childImageSharp {
-            gatsbyImageData
-            fluid {
-              src
-            }
-          }
-        }
-      }
-    }
-    allAuthors: allMarkdownRemark(
-      filter: { fileAbsolutePath: { regex: "/src/markdown/authors//" } }
-      limit: 5
-    ) {
-      nodes {
-        frontmatter {
-          slug
-          title
-          job
-          exerpt
-          ava {
-            childImageSharp {
-              gatsbyImageData
-            }
-          }
-          contacts {
-            link
-            name
-          }
-        }
-      }
-    }
-    allCategories: allMarkdownRemark {
-      distinct(field: { frontmatter: { category: SELECT } })
+query($slug: String) {
+  site {
+    siteMetadata {
+      siteUrl
     }
   }
+
+  latestNews: allContentfulNews(
+    filter: { slug: { ne: $slug } }
+    limit: 5
+  ) {
+    nodes {
+      id
+      slug
+      title
+      category {
+        title
+      }
+      createdAt
+      thumbnail {
+        gatsbyImageData(width: 600, height: 400, layout: CONSTRAINED)
+        description
+        url
+      }
+    }
+  }
+
+  singleNews: contentfulNews(slug: { eq: $slug }) {
+    id
+    slug
+    title
+    createdAt
+    read
+    content {
+      raw
+    }
+    description {
+      description
+    }
+    thumbnail {
+      gatsbyImageData(width: 1200, height: 800, layout: CONSTRAINED)
+      description
+      url
+    }
+   author {
+      name
+      job
+      slug
+      excerpt {
+        excerpt
+      }
+      ava {
+        gatsbyImageData(width: 400, height: 400, layout: CONSTRAINED)
+      }
+      email
+      discord
+      facebook
+      linkedin
+    }
+    category {
+      title
+    }
+  }
+
+  allContentfulCategories {
+    nodes {
+      title
+      slug
+    }
+  }
+}
 `;

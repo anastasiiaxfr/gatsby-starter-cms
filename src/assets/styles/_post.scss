@@ -120,9 +120,12 @@
     }
 
     &-content {
+      h1:not(:first-child) {
+        margin-top: $gap3;
+      }
       p,
       li {
-        @apply text-[15px] my-2 opacity-60 dark:opacity-100 dark:text-dark_5;
+        @apply text-[15px] my-2 dark:opacity-100 dark:text-dark_5;
       }
 
       a {

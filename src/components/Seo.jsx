@@ -7,17 +7,17 @@ export const SEO = ({ title, description, pathname, image, link, children }) => 
   const seo = {
     title: title || defaultTitle,
     description: description || defaultDescription,
-    image: image || "/seo/seo.jpg",
+    image: image?.gatsbyImageData.images.sources[0].srcSet.split(",")[0].split(" ")[0] || "/seo/seo.jpg",
     url: `${siteUrl}${pathname || ""}`,
     link: link ? `${siteUrl}${link}` : "/",
     twitterUsername,
     author: "Anastasiia Berest",
   };
-
   return (
     <>
+    
       {/* Title and Meta Tags */}
-      <title>{`XFR.News | ${seo.title}`}</title>
+      <title>{`XFR.News | ${seo.title}`} </title>
       <meta name="description" content={seo.description} />
       <meta name="image" content={seo.image} />
       <meta name="author" content={seo.author} />
@@ -29,7 +29,7 @@ export const SEO = ({ title, description, pathname, image, link, children }) => 
       <meta name="twitter:description" content={seo.description} />
       <meta name="twitter:image" content={seo.image} />
       <meta name="twitter:creator" content={seo.twitterUsername} />
-
+     
       {/* Open Graph Meta Tags */}
       <meta property="og:title" content={seo.title} />
       <meta property="og:description" content={seo.description} />

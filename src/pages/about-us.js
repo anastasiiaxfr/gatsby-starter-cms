@@ -11,9 +11,10 @@ import { BsFillPlayCircleFill } from "react-icons/bs";
 import TeamCard from "../components/Team-card";
 
 function AboutUs({ data }) {
-  const { allCategories, allTeams } = data;
+  const { allTeams } = data;
+  const allCategories = data.allContentfulCategories.nodes;
   return (
-    <Layout categories={allCategories.distinct}>
+    <Layout categories={allCategories}>
       <div className="">
         <div className="container">
           <h1>About Us</h1>
@@ -123,8 +124,11 @@ export const Head = () => <SEO title="About Us" />;
 
 export const query = graphql`
   query AboutUs {
-    allCategories: allMarkdownRemark {
-      distinct(field: { frontmatter: { category: SELECT } })
+    allContentfulCategories {
+      nodes {
+        title
+        slug
+      }
     }
     allTeams: allMarkdownRemark(
       filter: { fileAbsolutePath: { regex: "/src/markdown/team//" } }

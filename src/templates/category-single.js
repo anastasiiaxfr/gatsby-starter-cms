@@ -6,16 +6,15 @@ import Card from "../components/Article";
 import Pagination from "../components/Pagination";
 
 const CategoryTemplate = ({ data, pageContext }) => {
-  // const posts = data.allMarkdownRemark.edges;
-  //console.log("category", data);
+  //console.log("category", pageContext);
   const { category } = pageContext;
   const { numPages, currentPage } = pageContext;
 
-  const { allCategories } = data;
-  const posts = data.allMarkdownRemark.edges;
+  const allCategories = data.allContentfulCategories.nodes;
+  const posts = data.allContentfulNews.nodes;
 
   return (
-    <Layout categories={allCategories.distinct}>
+    <Layout categories={allCategories}>
       <div className="container">
         <h1>
           <b className="text-main">{category}</b> News
@@ -28,10 +27,10 @@ const CategoryTemplate = ({ data, pageContext }) => {
             </Link>
           )}
 
-          {posts.map(({ node }) => (
+          {posts.map((i) => (
             <Card
-              key={node.id}
-              data={node.frontmatter}
+              key={i.id}
+              data={i}
               name={`card`}
               desc={false}
               showImg={posts.length === 1 || posts.length === 2 ? false : true}
@@ -48,30 +47,39 @@ const CategoryTemplate = ({ data, pageContext }) => {
 // GraphQL page query to fetch posts for the category
 export const pageQuery = graphql`
   query($category: String, $skip: Int!, $limit: Int!) {
-    allMarkdownRemark(filter: { frontmatter: { category: { eq: $category } } }, skip: $skip, limit: $limit) {
-      edges {
-        node {
-          id
-          frontmatter {
-            title
-            authors
-            category
-            exerpt
-            date
-            slug
-            thumb {
-              childImageSharp {
-                gatsbyImageData
-              }
-            }
-          }
-        }
+  allContentfulNews(
+    filter: { category: { title: { eq: $category } } }
+    skip: $skip
+    limit: $limit
+  ) {
+    nodes {
+      id
+      slug
+      title
+      createdAt
+      read
+      author {
+        name
+      }
+      category {
+        title
+      }
+      description {
+        description
+      }
+      thumbnail {
+        gatsbyImageData(width: 600, height: 400, layout: CONSTRAINED)
+        description
       }
     }
-    allCategories: allMarkdownRemark {
-      distinct(field: { frontmatter: { category: SELECT } })
+  }
+  allContentfulCategories {
+    nodes {
+      title
+      slug
     }
   }
+}
 `;
 
 export default CategoryTemplate;

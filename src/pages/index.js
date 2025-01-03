@@ -6,10 +6,11 @@ import { StaticImage } from "gatsby-plugin-image";
 import Article from "../components/Article";
 
 export default function Home({ data }) {
-  const news = data.allMarkdownRemark.nodes;
-  const { allCategories } = data;
+  const news = data.allContentfulNews.nodes;
+  const allCategories = data.allContentfulCategories.nodes;
+  console.log('data', data)
   return (
-    <Layout categories={allCategories.distinct}>
+    <Layout categories={allCategories}>
       <div className="container">
         <h1 className="">Breaking news</h1>
         <section className="banners banners_1">
@@ -17,13 +18,13 @@ export default function Home({ data }) {
             <StaticImage src="../assets/img/news/banners/b1.jpg" alt="A dinosaur" />
           </Link>
           {news.slice(0, 1).map((i, ind) => (
-            <Article data={i.frontmatter} key={ind} showImg={false} lgDesc={true} />
+            <Article data={i} key={ind} showImg={false} lgDesc={true} />
           ))}
         </section>
         <section className="cards cards_2">
           {news.slice(1, 4).map((i, ind) => (
             <Article
-              data={i.frontmatter}
+              data={i}
               key={ind}
               showImg={ind === 0 || ind == 1 || ind === 2 ? false : true}
               name={`card ${ind === 0 ? "card-lg" : ""}`}
@@ -35,14 +36,14 @@ export default function Home({ data }) {
         <h2 className="h1">Latest News</h2>
         <section className="cards cards_3">
           {news.slice(4, 8).map((i, ind) => (
-            <Article data={i.frontmatter} key={ind} />
+            <Article data={i} key={ind} />
           ))}
         </section>
         <h2 className="h1">Analytics</h2>
         <section className="cards cards_1">
           {news.slice(8, 14).map((i, ind) => (
             <Article
-              data={i.frontmatter}
+              data={i}
               key={ind}
               name={`card ${ind === 0 ? "card-lg-l" : ""} ${ind === 1 ? "card-lg-r" : ""}`}
             />
@@ -55,27 +56,34 @@ export default function Home({ data }) {
 
 export const Head = () => <SEO />;
 export const query = graphql`
-  query allNewsAndCategories {
-    allMarkdownRemark(filter: { fileAbsolutePath: { regex: "/src/markdown/news/" } }, limit: 15) {
-      nodes {
-        frontmatter {
-          title
-          authors
-          category
-          exerpt
-          date
-          slug
-          thumb {
-            childImageSharp {
-              gatsbyImageData
-            }
-          }
-        }
-        id
+query allNews {
+  allContentfulNews(sort: {createdAt: DESC}) {
+    nodes {
+      id
+      slug
+      title
+      read
+      createdAt(fromNow: false)
+      description {
+        description
+      }
+      thumbnail {
+        description
+        gatsbyImageData(height: 300, width: 600, layout: CONSTRAINED)
+      }
+      category {
+        title
+      }
+      author {
+        name
       }
     }
-    allCategories: allMarkdownRemark {
-      distinct(field: { frontmatter: { category: SELECT } })
+  }
+  allContentfulCategories {
+    nodes {
+      title
+      slug
     }
   }
+}
 `;

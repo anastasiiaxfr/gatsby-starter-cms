@@ -1,13 +1,16 @@
 const path = require("path");
 
-exports.createPages = async function({ actions, graphql }) {
+exports.createPages = async function ({ actions, graphql }) {
   const { createPage } = actions;
 
-  // Query to get all unique categories from markdown files
-  const categoryResult = await graphql(`
+  // Query to get all categories from Contentful
+ const categoryResult = await graphql(`
     query {
-      allMarkdownRemark {
-        distinct(field: { frontmatter: { category: SELECT } })
+      allContentfulCategories {
+        nodes {
+          title
+          slug
+        }
       }
     }
   `);
@@ -17,136 +20,65 @@ exports.createPages = async function({ actions, graphql }) {
     return;
   }
 
-  const categories = categoryResult.data.allMarkdownRemark.distinct;
+  const categories = categoryResult.data.allContentfulCategories.nodes;
 
   // Create paginated category pages
-  categories.forEach(async (category) => {
-    const categorySlug = category.toLowerCase().replace(/\s+/g, "-"); // Generate a slug for the category
+  for (const category of categories) {
+    // Ensure category slug is safe
+    const categorySlug = category.slug ? category.slug : "default-category";
 
-    // Query for all posts in the category to paginate
+    // Query for posts in this category
     const postsResult = await graphql(`
-      query {
-        allMarkdownRemark(
-          filter: { frontmatter: { category: { eq: "${category}" } } }
-          limit: 500
-        ) {
-          edges {
-            node {
-              id
-              frontmatter {
-                title
-                slug
-              }
-            }
-          }
-        }
-      }
-    `);
-
-    if (postsResult.errors) {
-      console.log(`Error fetching posts for category: ${category}`, postsResult.errors);
-      return;
-    }
-
-    const posts = postsResult.data.allMarkdownRemark.edges;
-    const postsPerPage = 8; // Define how many posts per page
-    const numPages = Math.ceil(posts.length / postsPerPage);
-
-    Array.from({ length: numPages }).forEach((_, pageIndex) => {
-      const currentPage = pageIndex + 1;
-      const pagePath = currentPage === 1 ? `/category/${categorySlug}/` : `/category/${categorySlug}/${currentPage}`;
-
-      // Create the paginated category page
-      createPage({
-        path: pagePath,
-        component: path.resolve("./src/templates/category-single.js"), // Path to the category template
-        context: {
-          category,
-          limit: postsPerPage, // Number of posts per page
-          skip: pageIndex * postsPerPage, // Skip posts for pagination
-          numPages,
-          currentPage, // Current page number
-        },
-      });
-    });
-  });
-
-  // Query to get all unique authors from markdown files
-  const authorResult = await graphql(`
-    query {
-      allMarkdownRemark {
-        distinct(field: { frontmatter: { authors: SELECT } })
-      }
-    }
-  `);
-
-  if (authorResult.errors) {
-    console.log("Error fetching authors:", authorResult.errors);
-    return;
-  }
-
-  const authors = authorResult.data.allMarkdownRemark.distinct;
-
-  // Create paginated author pages
-  authors.forEach(async (author) => {
-    const authorSlug = author.toLowerCase().replace(/\s+/g, "-"); // Generate a slug for the author
-
-    // Query for all posts by this author to paginate
-    const postsResult = await graphql(`
-      query {
-        allMarkdownRemark(
-          filter: { frontmatter: { authors: { eq: "${author}" } } }
-          limit: 500
-        ) {
-          edges {
-            node {
-              id
-              frontmatter {
-                title
-                slug
-              }
-            }
-          }
-        }
-      }
-    `);
-
-    if (postsResult.errors) {
-      console.log(`Error fetching posts for author: ${author}`, postsResult.errors);
-      return;
-    }
-
-    const posts = postsResult.data.allMarkdownRemark.edges;
-    const postsPerPage = 3; // Define how many posts per page
-    const numPages = Math.ceil(posts.length / postsPerPage);
-
-    Array.from({ length: numPages }).forEach((_, pageIndex) => {
-      const currentPage = pageIndex + 1;
-      const pagePath = currentPage === 1 ? `/authors/${authorSlug}/` : `/authors/${authorSlug}/${currentPage}`;
-
-      // Create the paginated author page
-      createPage({
-        path: pagePath,
-        component: path.resolve("./src/templates/author-single.js"), // Path to the author template
-        context: {
-          author,
-          limit: postsPerPage, // Number of posts per page
-          skip: pageIndex * postsPerPage, // Skip posts for pagination
-          numPages,
-          currentPage, // Current page number
-        },
-      });
-    });
-  });
-
-  // Query for all news posts to create individual pages
-  const postResult = await graphql(`
-    query {
-      allMarkdownRemark(filter: { fileAbsolutePath: { regex: "/src/markdown/news/" } }) {
-        nodes {
-          frontmatter {
+      query($category: String) {
+        allContentfulNews(filter: { category: { title: { eq: $category } } }) {
+          nodes {
+            id
+            title
             slug
           }
+        }
+      }
+    `, {
+      category: category.title,
+    });
+
+    if (postsResult.errors) {
+      console.log(`Error fetching posts for category: ${category.title}`, postsResult.errors);
+      continue;
+    }
+
+    const posts = postsResult.data.allContentfulNews.nodes;
+    const postsPerPage = 8; // Number of posts per page
+    const numPages = Math.ceil(posts.length / postsPerPage);
+
+    // Create paginated category pages
+    for (let pageIndex = 0; pageIndex < numPages; pageIndex++) {
+      const currentPage = pageIndex + 1;
+      const pagePath = currentPage === 1 
+        ? `/category/${categorySlug}/` 
+        : `/category/${categorySlug}/${currentPage}`;
+
+      createPage({
+        path: pagePath,
+        component: path.resolve("./src/templates/category-single.js"),
+        context: {
+          category: category.title,
+          limit: postsPerPage,
+          skip: pageIndex * postsPerPage,
+          numPages,
+          currentPage,
+        },
+      });
+    }
+  }
+
+
+  // Query for all posts from Contentful to create individual post pages
+  const postResult = await graphql(`
+    query {
+      allContentfulNews {
+        nodes {
+          slug
         }
       }
     }
@@ -158,13 +90,91 @@ exports.createPages = async function({ actions, graphql }) {
   }
 
   // Create a page for each individual post
-  postResult.data.allMarkdownRemark.nodes.forEach((node) => {
-    const postSlug = node.frontmatter.slug;
+  for (const node of postResult.data.allContentfulNews.nodes) {
+    const postSlug = node.slug;
 
     createPage({
       path: `/news/${postSlug}`, // URL path for the post page
       component: path.resolve("./src/templates/news-single.js"), // Template for news post page
       context: { slug: postSlug }, // Pass post slug to template
     });
-  });
+  }
+
+
+
+  // Query to get all authors from Contentful
+
+  const authorResult = await graphql(`
+    query {
+      allContentfulAuthors {
+        nodes {
+          name
+          slug  
+        }
+      }
+    }
+  `);
+
+  if (authorResult.errors) {
+    console.log("Error fetching authors:", authorResult.errors);
+    return;
+  }
+
+  const authors = authorResult.data.allContentfulAuthors.nodes;
+
+  // Create paginated author pages
+  for (const author of authors) {
+    // Use author.slug if it's available, otherwise generate slug from name
+    const authorSlug = author.slug;
+
+    // Query for all posts by this author to paginate
+    const postsResult = await graphql(`
+      query($authorSlug: String!) {
+        allContentfulNews(
+        filter: {author: {elemMatch: {slug: {eq: $authorSlug }}}}){
+          nodes {
+            id
+            title
+            slug
+          }
+        }
+      }
+    `, {
+      authorSlug: authorSlug,  
+    });
+
+
+    if (postsResult.errors) {
+      console.log(`Error fetching posts for author: ${author.name}`, postsResult.errors);
+      continue;
+    }
+
+    const posts = postsResult.data.allContentfulNews.nodes;
+    const postsPerPage = 3; // Number of posts per page
+    const numPages = Math.ceil(posts.length / postsPerPage);
+
+    // Create paginated author pages
+    for (let pageIndex = 0; pageIndex < numPages; pageIndex++) {
+      const currentPage = pageIndex + 1;
+      const pagePath = currentPage === 1 
+        ? `/authors/${authorSlug}/` 
+        : `/authors/${authorSlug}/${currentPage}`;
+
+      createPage({
+        path: pagePath,
+        component: path.resolve("./src/templates/author-single.js"),
+        context: {
+          author,
+          authorName: author.name,
+          limit: postsPerPage,
+          skip: pageIndex * postsPerPage,
+          numPages,
+          currentPage,
+        },
+      });
+    }
+  }
+
 };
+
+

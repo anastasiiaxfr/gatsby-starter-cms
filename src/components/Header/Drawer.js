@@ -16,8 +16,8 @@ function Drawer({ data, showDrawer, setShowDrawer }) {
 
       <nav className="drawer-menu">
         {data?.map((i, ind) => (
-          <Link to={`/category/${i.toLowerCase().replaceAll(" ", "-")}`} key={ind} onClick={() => setShowDrawer(false)}>
-            {i}
+          <Link to={`/category/${i.slug}`} key={ind} onClick={() => setShowDrawer(false)}>
+            {i.title}
           </Link>
         ))}
         <Link to="/authors" onClick={() => setShowDrawer(false)}>Authors</Link>

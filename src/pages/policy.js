@@ -2,40 +2,38 @@ import React from "react";
 import Layout from "../components/Layout";
 import { SEO } from "../components/Seo";
 import { graphql } from "gatsby";
+import Builder from "../components/Builder";
 
 function Policy({ data }) {
-  // Access the title and html content from the first node in the data
-  const { html } = data.allMarkdownRemark.nodes[0];
-  const { title } = data.allMarkdownRemark.nodes[0].frontmatter;
-  const { allCategories } = data;
-
+  const allCategories = data.allContentfulCategories.nodes;
+  const page = data.contentfulTerms;
   return (
-    <Layout categories={allCategories.distinct}>
+    <Layout categories={allCategories}>
       <div className="page container max-w-6xl">
-        <h1>{title}</h1>
-        {/* Render the HTML content */}
-        <div dangerouslySetInnerHTML={{ __html: html }} />
+        <h1>{page.title}</h1>
+        <Builder post={page} />
       </div>
     </Layout>
   );
 }
 
-export const Head = () => <SEO title="Privacy Policy" />;
+export const Head = () => <SEO title="Terms of Services" />;
 
 export const query = graphql`
   query Policy {
-    allMarkdownRemark(filter: { fileAbsolutePath: { regex: "/src/markdown/terms/policy/" } }) {
-      nodes {
-        frontmatter {
-          title
+    contentfulTerms(slug: {in: "privacy-policy"}) {
+        title
+        content {
+          raw
         }
-        html
+        slug
+    }
+    allContentfulCategories {
+      nodes {
+        title
+        slug
       }
-    }
-
-    allCategories: allMarkdownRemark {
-      distinct(field: { frontmatter: { category: SELECT } })
-    }
+   } 
   }
 `;
 

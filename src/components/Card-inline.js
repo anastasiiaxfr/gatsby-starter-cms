@@ -4,25 +4,24 @@ import { GatsbyImage, getImage } from "gatsby-plugin-image";
 import { FaRegCalendarAlt } from "react-icons/fa";
 
 function Article({ data, name = "card", showImg = true, lgDesc = false, desc = true }) {
-  let img = getImage(data.thumb);
-
   return (
     <article className={name}>
       {showImg ? (
         <div className="card-img">
           <Link className="" to={`/news/${data.slug}`}>
-            <GatsbyImage image={img} alt="A dinosaur" />
+            <GatsbyImage image={data.thumbnail.gatsbyImageData}
+              alt={data.thumbnail.description || data.title} />
           </Link>
           <div className="card-info">
-            <Link to={`/category/${data.category.toLowerCase().replace(/\s+/g, "-")}`} className="chip">
-              {data.category}
+            <Link to={`/category/${data.category.title.slug}`} className="chip">
+              {data.category.title}
             </Link>
           </div>
         </div>
       ) : (
         <div className="card-info">
-          <Link to={`/category/${data.category.toLowerCase().replace(/\s+/g, "-")}`} className="chip">
-            {data.category}
+          <Link to={`/category/${data.category.slug}`} className="chip">
+            {data.category.title}
           </Link>
         </div>
       )}
@@ -31,25 +30,25 @@ function Article({ data, name = "card", showImg = true, lgDesc = false, desc = t
         <Link className="card-content" to={`/news/${data.slug}`}>
           <div className="card-date">
             <FaRegCalendarAlt />
-            <time dateTime={data.date}>
-              {new Date(data.date).getFullYear()}-{String(new Date(data.date).getMonth() + 1).padStart(2, "0")}-
-              {String(new Date(data.date).getDate()).padStart(2, "0")}
+            <time dateTime={data.createdAt}>
+              {new Date(data.createdAt).getFullYear()}-{String(new Date(data.createdAt).getMonth() + 1).padStart(2, "0")}-
+              {String(new Date(data.createdAt).getDate()).padStart(2, "0")}
             </time>
             {"|"}
-            <small> 10 min read</small>
+            <small> {data.read} min read</small>
           </div>
           <div className="card-title">{data.title}</div>
-          {desc && <div className="card-desc">{data.exerpt}</div>}
+          {desc && <div className="card-desc">{data.description.description}</div>}
         </Link>
         <div className="card-footer">
           <div className="card-auth">
             By{" "}
-            {data.authors.map((author, ind) => (
+            {data.author.map((author, ind) => (
               <>
                 <Link to="/" key={ind} className="card-note">
-                  {author}
+                  {author.name}
                 </Link>
-                {ind < data.authors.length - 1 && " /"}
+                {ind < data.author.length - 1 && " /"}
               </>
             ))}
           </div>

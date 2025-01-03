@@ -64,9 +64,9 @@ const offices = [
 
 
 function Contacts({ data }) {
-    const { allCategories } = data;
+    const allCategories = data.allContentfulCategories.nodes;
     return (
-        <Layout categories={allCategories.distinct}>
+        <Layout categories={allCategories}>
             <div className="page">
                 <section className="mb-10">
                     <div className="container">
@@ -140,8 +140,11 @@ export const query = graphql`
       }
     }
 
-    allCategories: allMarkdownRemark {
-      distinct(field: { frontmatter: { category: SELECT } })
+    allContentfulCategories {
+        nodes {
+        title
+        slug
+        }
     }
   }
 `;

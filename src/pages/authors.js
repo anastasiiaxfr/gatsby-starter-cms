@@ -20,8 +20,9 @@ import "swiper/css/scrollbar";
 
 
 function Authors({ data }) {
-    const { allCategories, allMarkdownRemark, allTeams } = data;
-   
+    const allTeams = data.allTeams.nodes;
+    const allAuthors = data.allContentfulAuthors.nodes;
+    const allCategories = data.allContentfulCategories.nodes;
     const sliderRef = useRef(null);
 
     const handlePrev = useCallback(() => {
@@ -35,10 +36,10 @@ function Authors({ data }) {
       }, []);
 
     return (
-        <Layout categories={allCategories.distinct}>
+        <Layout categories={allCategories}>
             <div className="container">
                 <h1>Top Authors</h1>
-                <AuthorCard data={allMarkdownRemark.nodes} />
+                <AuthorCard data={allAuthors} />
 
                 {/* Custom Navigation */}
                 <div className="flex flex-wrap justify-between items-center gap-2">
@@ -73,7 +74,7 @@ function Authors({ data }) {
                         },
                     }}
                 >
-                    {allTeams.nodes.map((team, index) => (
+                    {allTeams.map((team, index) => (
                         <SwiperSlide key={index}>
                             <TeamCard data={team.frontmatter} />
                         </SwiperSlide>
@@ -90,28 +91,24 @@ export const Head = () => <SEO title="Authors" />;
 
 export const query = graphql`
     query Authors {
-      allMarkdownRemark(
-        filter: { fileAbsolutePath: { regex: "/src/markdown/authors//" } }
-        limit: 100
-      ) {
-        nodes {
-          frontmatter {
-            slug
-            title
+      allContentfulAuthors {
+          nodes {
+            name
             job
-            exerpt
+            excerpt {
+              excerpt
+            }
             ava {
-              childImageSharp {
-                gatsbyImageData
-              }
+              gatsbyImageData(height: 400, width: 400, layout: CONSTRAINED)
             }
-            contacts {
-              link
-              name
-            }
+            facebook
+            linkedin
+            slug
+            discord
+            email
           }
-        }
       }
+      
       allTeams: allMarkdownRemark(
         filter: { fileAbsolutePath: { regex: "/src/markdown/team//" } }
         limit: 100
@@ -134,8 +131,12 @@ export const query = graphql`
           }
         }
       }
-      allCategories: allMarkdownRemark {
-        distinct(field: { frontmatter: { category: SELECT } })
-      }
+
+      allContentfulCategories {
+        nodes {
+          title
+          slug
+        }
+      }  
     }
   `;
